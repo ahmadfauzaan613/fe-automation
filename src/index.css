@@ -11,7 +11,7 @@ body {
   scroll-behavior: smooth;
   overflow: hidden;
   background-color: #fefefe;
-  font-family: 'Quicksand', sans-serif, 'Roboto', sans-serif;
+  font-family: "Kode Mono", monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -144,4 +144,42 @@ p {
 
 iframe {
   width: 100% !important;
+}
+
+@keyframes count {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.number-animation {
+  animation: count 2s ease-in-out;
+}
+
+
+.pagination {
+  margin-top: 20px;
+  text-align: end;
+}
+
+.pagination-button {
+  padding: 5px 10px;
+  margin: 0 0px;
+  width: 3vw;
+  cursor: pointer;
+  border: 1px solid #22c55e;
+  color: #22c55e;
+}
+
+.pagination-button.active {
+  background-color: #22c55e;
+  color: #ffffff;
+}
+
+.pagination-button:focus {
+  outline: none;
 }

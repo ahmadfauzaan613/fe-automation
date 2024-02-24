@@ -6,6 +6,9 @@ import { store } from './Redux'
 import AdminPage from './Pages/Admin'
 import LayoutAdmin from './Components/LayoutAdmin'
 import Dashboard from './Pages/Dashboard'
+import DataBot from './Pages/DataBot'
+import BotData from './Pages/Data/Dummy'
+import UserPage from './Pages/User'
 
 function App() {
   return (
@@ -18,6 +21,30 @@ function App() {
             element={
               <LayoutAdmin>
                 <Dashboard />
+              </LayoutAdmin>
+            }
+          />
+          <Route
+            path="/dashboard/bot"
+            element={
+              <LayoutAdmin>
+                <DataBot />
+              </LayoutAdmin>
+            }
+          />
+          <Route
+            path="/dashboard/bot/data-bot"
+            element={
+              <LayoutAdmin>
+                <BotData />
+              </LayoutAdmin>
+            }
+          />
+          <Route
+            path="/dashboard/user"
+            element={
+              <LayoutAdmin>
+                <UserPage />
               </LayoutAdmin>
             }
           />

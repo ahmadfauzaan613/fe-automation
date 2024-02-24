@@ -10,8 +10,10 @@ function LayoutAdmin(props) {
         <div className="col-span-2">
           <Sidebar />
         </div>
-        <div className="col-span-10">
-          <div className="py-7 px-12 bg-white">{props.children}</div>
+        <div className="col-span-10 ">
+          <div data-theme="business" className="py-7 px-12 h-screen">
+            {props.children}
+          </div>
         </div>
       </div>
     </React.Fragment>

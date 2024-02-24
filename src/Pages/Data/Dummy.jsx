@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { TypeAnimation } from 'react-type-animation'
-import Table from '../Components/Table'
+import Table from '../../Components/Table'
+import { FaRegWindowClose } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 function NumberAnimation({ value }) {
   const [displayValue, setDisplayValue] = useState(0)
@@ -36,7 +38,7 @@ function CardTask(props) {
   )
 }
 
-function Dashboard() {
+function Dummy() {
   const columns = React.useMemo(
     () => [
       {
@@ -89,14 +91,17 @@ function Dashboard() {
     ],
     []
   )
+  const navigate = useNavigate()
   return (
     <React.Fragment>
-      <TypeAnimation sequence={['Dashboard', 1000, 'Typing...', 1000, 'Dashboard', 1000, 'Typing...', 1000, 'Dashboard', 1000]} speed={50} style={{ fontSize: '48px', display: 'inline-block', color: '#feff6e' }} repeat={Infinity} />
+      <div className="flex items-center justify-between">
+        <TypeAnimation sequence={['Data Dummy', 1000, 'Typing...', 1000, 'Data Dummy', 1000, 'Typing...', 1000, 'Data Dummy', 1000]} speed={50} style={{ fontSize: '48px', display: 'inline-block', color: '#feff6e' }} repeat={Infinity} />
+        <button onClick={() => navigate('/dashboard/bot')} className="outline-none cursor-pointer">
+          <FaRegWindowClose size={'38px'} color="#fff" />
+        </button>
+      </div>
       <div className="flex items-center justify-between gap-3 mt-10">
-        <CardTask task={'Total Task'} value={10} />
-        <CardTask task={'Pending Task'} value={10} />
-        <CardTask task={'On Going Task'} value={10} />
-        <CardTask task={'Done Task'} value={10} />
+        <CardTask task={'Total Data'} value={10} />
       </div>
       <div className="mt-14">
         <Table columns={columns} data={data} />
@@ -105,4 +110,4 @@ function Dashboard() {
   )
 }
 
-export default Dashboard
+export default Dummy
