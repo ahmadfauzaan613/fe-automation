@@ -1,8 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Sidebar from './Sidebar'
 import Navbar from './Navbar'
+import { useNavigate } from 'react-router-dom'
 
 function LayoutAdmin(props) {
+  const navigate = useNavigate()
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      navigate('/')
+    }
+  }, [navigate])
+
   return (
     <React.Fragment>
       <Navbar />

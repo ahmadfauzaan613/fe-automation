@@ -3,6 +3,9 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import Particles, { initParticlesEngine } from '@tsparticles/react'
 import { loadSlim } from '@tsparticles/slim'
 import { TypeAnimation } from 'react-type-animation'
+import { Login } from '../Redux/User/action'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 function Admin() {
   const [show, setShow] = useState(false)
@@ -66,6 +69,28 @@ function Admin() {
     []
   )
 
+  const [fUsername, setFusername] = useState('')
+  const [fPassword, setFpassword] = useState('')
+
+  const handleUsername = (e) => {
+    setFusername(e.target.value)
+  }
+  const handlePassword = (e) => {
+    setFpassword(e.target.value)
+  }
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const onSubmit = async ({ username, password }) => {
+    try {
+      await dispatch(Login(fUsername, fPassword))
+      navigate('/dashboard')
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
+
   return (
     <React.Fragment>
       <div className="flex justify-center items-center h-[100vh]" data-theme="black">
@@ -74,9 +99,9 @@ function Admin() {
             <TypeAnimation sequence={['Login', 1000, '...', 1000, 'ログイン', 1000, '...', 1000, '登录页面', 1000, '...', 1000]} speed={50} style={{ fontSize: '30px', display: 'inline-block', color: '#fff' }} repeat={Infinity} />
           </div>
           <div className="mt-8 space-y-6">
-            <input data-theme="black" type="text" name="username" id="username" placeholder="Username" className="w-full  h-fit border  border-green-500  px-2 py-3 outline-none" />
+            <input value={fUsername} onChange={handleUsername} data-theme="black" type="text" name="username" id="username" placeholder="Username" className="w-full  h-fit border  border-green-500  px-2 py-3 outline-none" />
             <div className="flex items-center  border border-green-500 px-2 py-3">
-              <input data-theme="black" type={show ? 'password' : 'text'} name="password" id="password" placeholder="Password" className="w-full  h-fit   outline-none" />
+              <input value={fPassword} autoComplete="off" onChange={handlePassword} data-theme="black" type={!show ? 'password' : 'text'} name="password" id="password" placeholder="Password" className="w-full  h-fit   outline-none" />
               <button
                 onClick={() => {
                   toggleShow()
@@ -85,7 +110,7 @@ function Admin() {
                 {show ? <FaEyeSlash size={'18px'} color="#ff0000" /> : <FaEye size={'18px'} color="#ff0000" />}
               </button>
             </div>
-            <button data-theme="forest" type="button" className="text-center btn btn-primary btn-outline uppercase font-bold w-full py-[0.8rem] rounded-sm ">
+            <button onClick={onSubmit} data-theme="forest" type="button" className="text-center btn btn-primary btn-outline uppercase font-bold w-full py-[0.8rem] rounded-sm ">
               Login
             </button>
           </div>
