@@ -47,3 +47,89 @@ export const getAllTask = () => {
     }
   }
 }
+
+export const postTask = (name_task, status) => {
+  return async (dispatch) => {
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        console.error('Token is not available.')
+        dispatch(setLoading(false))
+        return
+      }
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+
+      const response = await axios.post(`${apiurl}/task/create`, { name_task, status }, config)
+      const postEntity = response.data
+      dispatch(setEntity(postEntity))
+      dispatch(setLoading(false))
+    } catch (error) {
+      throw new Error(error.response)
+    }
+  }
+}
+
+export const updateTask = (id, newname_task, newstatus) => {
+  return async (dispatch) => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      console.error('Token is not available.')
+      dispatch(setLoading(false))
+      return
+    }
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+    try {
+      const response = await axios.put(
+        `${apiurl}/task/update`,
+        {
+          id,
+          name_task: newname_task,
+          status: newstatus,
+        },
+        config
+      )
+      const putDevices = response.data
+      dispatch(setEntity(putDevices))
+      dispatch(setLoading(false))
+    } catch (error) {
+      throw new Error(error.response)
+    }
+  }
+}
+
+export const deleteTask = (id) => {
+  return async (dispatch) => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      console.error('Token is not available.')
+      dispatch(setLoading(false))
+      return
+    }
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+
+    try {
+      const response = await axios.delete(`${apiurl}/task/delete/${id}`, config)
+      const delData = response.data
+      dispatch(setEntity(delData))
+      dispatch(setLoading(false))
+    } catch (error) {
+      throw new Error(error.response)
+    }
+  }
+}

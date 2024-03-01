@@ -117,19 +117,60 @@ export const postUser = (username, first_name, last_name, role, password) => {
   }
 }
 
-export const updateUser = (id, newusername, newfirst_name, newlast_name, newrole, newpassword) => {
+export const updateUser = (id, newusername, newfirst_name, newlast_name) => {
   return async (dispatch) => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      console.error('Token is not available.')
+      dispatch(setLoading(false))
+      return
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
     try {
-      const response = await axios.put(`${apiurl}/user/update`, {
-        id,
-        username: newusername,
-        first_name: newfirst_name,
-        last_name: newlast_name,
-        role: newrole,
-        password: newpassword,
-      })
+      const response = await axios.put(
+        `${apiurl}/user/update`,
+        {
+          id,
+          username: newusername,
+          first_name: newfirst_name,
+          last_name: newlast_name,
+        },
+        config
+      )
       const putDevices = response.data
       dispatch(setEntity(putDevices))
+      dispatch(setLoading(false))
+    } catch (error) {
+      throw new Error(error.response)
+    }
+  }
+}
+
+export const deleteUser = (id) => {
+  return async (dispatch) => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      console.error('Token is not available.')
+      dispatch(setLoading(false))
+      return
+    }
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+
+    try {
+      const response = await axios.delete(`${apiurl}/user/delete/${id}`, config)
+      const delData = response.data
+      dispatch(setEntity(delData))
       dispatch(setLoading(false))
     } catch (error) {
       throw new Error(error.response)

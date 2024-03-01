@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 function Admin() {
   const [show, setShow] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const toggleShow = () => {
     setShow(!show)
   }
@@ -82,11 +83,13 @@ function Admin() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const onSubmit = async ({ username, password }) => {
+  const onSubmit = async () => {
+    setIsLoading(true) // Menampilkan loading saat melakukan login
     try {
       await dispatch(Login(fUsername, fPassword))
       navigate('/dashboard')
     } catch (error) {
+      setIsLoading(false) // Menyembunyikan loading jika terjadi kesalahan saat login
       throw new Error(error)
     }
   }
@@ -110,9 +113,15 @@ function Admin() {
                 {show ? <FaEyeSlash size={'18px'} color="#ff0000" /> : <FaEye size={'18px'} color="#ff0000" />}
               </button>
             </div>
-            <button onClick={onSubmit} data-theme="forest" type="button" className="text-center btn btn-primary btn-outline uppercase font-bold w-full py-[0.8rem] rounded-sm ">
-              Login
-            </button>
+            {isLoading ? (
+              <div className="mt-14 flex justify-center">
+                <span className="loading loading-spinner loading-lg text-green-500" />
+              </div>
+            ) : (
+              <button onClick={onSubmit} data-theme="forest" type="button" className="text-center btn btn-primary btn-outline uppercase font-bold w-full py-[0.8rem] rounded-sm ">
+                Login
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -13,15 +13,29 @@ function ListMenu(props) {
 }
 
 function Sidebar() {
+  const role = localStorage.getItem('role')
+  const username = localStorage.getItem('username')
   const menuList = [
     { menu: 'Dashboard', icon: <FaHome size={'18px'} color="#fff" />, path: '/dashboard' },
     { menu: 'Data Bot', icon: <FaRobot size={'18px'} color="#fff" />, path: '/dashboard/bot' },
     { menu: 'User', icon: <FaUsers size={'18px'} color="#fff" />, path: '/dashboard/user' },
+    { menu: 'Task', icon: <FaRobot size={'18px'} color="#fff" />, path: '/dashboard/task' },
   ]
+
+  const filteredMenuList = menuList.filter((item) => {
+    if (role === 'superadmin' || username === 'ragaboi') {
+      return true
+    }
+    if (item.menu === 'Task') {
+      return false
+    }
+    return true
+  })
+
   return (
     <React.Fragment>
       <div data-theme="black" className="w-full pt-8 pb-7 space-y-7 px-10 h-screen border-r border-[#ea00d9]">
-        {menuList.map((item, idx) => (
+        {filteredMenuList.map((item, idx) => (
           <ListMenu key={idx} icon={item.icon} path={item.path} nameMenu={item.menu} />
         ))}
       </div>

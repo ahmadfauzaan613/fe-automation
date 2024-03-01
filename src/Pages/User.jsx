@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { TypeAnimation } from 'react-type-animation'
 import Table from '../Components/Table'
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllUser, postUser, updateUser } from '../Redux/User/action'
+import { getAllUser, postUser, updateUser, deleteUser } from '../Redux/User/action'
 import { FaEdit, FaEye, FaEyeSlash, FaPlus, FaTrash } from 'react-icons/fa'
 import Modal from 'react-modal'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useForm } from 'react-hook-form'
 
 function NumberAnimation({ value }) {
   const [displayValue, setDisplayValue] = useState(0)
@@ -45,6 +46,7 @@ function CardTask(props) {
 function User() {
   const [dataUpdate, setUpdateData] = useState(null)
   const [dataDlete, setDlete] = useState(null)
+  const { register, handleSubmit, setValue, reset } = useForm()
 
   const role = localStorage.getItem('role')
 
@@ -76,19 +78,29 @@ function User() {
         Header: 'Action',
         accessor: (data) => {
           return (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  buttonUpdateModal()
-                  setUpdateData(data)
-                }}
-                className="btn btn-sm btn-ghost btn-secondary"
-              >
-                <FaEdit size={'20px'} color="#05bcffd3" />
-              </button>
-              <button onClick={() => setDlete(data)} className="btn  btn-sm btn-ghost btn-secondary">
-                <FaTrash size={'20px'} color="red" />
-              </button>
+            <div>
+              {role === 'superadmin' && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      buttonUpdateModal()
+                      setUpdateData(data)
+                    }}
+                    className="btn btn-sm btn-ghost btn-secondary"
+                  >
+                    <FaEdit size={'20px'} color="#05bcffd3" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      buttonDeleteModal()
+                      setDlete(data)
+                    }}
+                    className="btn  btn-sm btn-ghost btn-secondary"
+                  >
+                    <FaTrash size={'20px'} color="red" />
+                  </button>
+                </div>
+              )}
             </div>
           )
         },
@@ -121,6 +133,12 @@ function User() {
   const buttonUpdateModal = () => {
     setmodalUpdateData(!modalUpdateData)
   }
+
+  const [modalDeleteData, setmodalDeleteData] = useState(false)
+  const buttonDeleteModal = () => {
+    setmodalDeleteData(!modalDeleteData)
+  }
+
   const [show, setShow] = useState(false)
   const toggleShow = () => {
     setShow(!show)
@@ -178,6 +196,37 @@ function User() {
     }
   }
 
+  const onUpdate = async ({ newusername, newfirst_name, newlast_name }) => {
+    try {
+      await dispatch(updateUser(dataUpdate.id, newusername, newfirst_name, newlast_name))
+      toast.success('Berhasil Update User')
+      dispatch(getAllUser())
+      setmodalUpdateData(!modalUpdateData)
+      reset()
+    } catch (error) {
+      toast.error('Gagal Update User')
+      throw new Error(error)
+    }
+  }
+
+  useEffect(() => {
+    setValue('newusername', dataUpdate && dataUpdate.username)
+    setValue('newfirst_name', dataUpdate && dataUpdate.first_name)
+    setValue('newlast_name', dataUpdate && dataUpdate.last_name)
+  }, [dataUpdate, setValue])
+
+  const dataDelete = async () => {
+    try {
+      await dispatch(deleteUser(dataDlete && dataDlete.id))
+      toast.success('Berhasil Delete User')
+      dispatch(getAllUser())
+      setmodalDeleteData(!modalDeleteData)
+    } catch (error) {
+      toast.error('Gagal Delete User')
+      throw new Error(error)
+    }
+  }
+
   return (
     <div>
       <React.Fragment>
@@ -191,17 +240,16 @@ function User() {
           </div>
         ) : (
           <div className="mt-14">
-            {role !== 'superadmin' && (
-              <button onClick={buttonModal} className="btn float-right mb-4  text-[18px] w-[7vw] h-[50px]   btn-sm btn-outline btn-secondary">
+            {role === 'superadmin' && (
+              <button onClick={buttonModal} className={`${allEntity && allEntity.length > 0 ? '' : 'hidden'} btn float-right mb-4  text-[18px] w-[7vw] h-[50px]   btn-sm btn-outline btn-secondary`}>
                 <FaPlus size={'16px'} color="#22c55e" /> Data
               </button>
             )}
-
             {allEntity && allEntity.length > 0 ? (
               <Table columns={columns} data={allEntity} />
             ) : (
-              <div>
-                <p>Kosong</p>
+              <div className="absolute bottom-[40%] right-[37%]">
+                <p className="text-[32px] pt-5 uppercase text-[#feff6e] font-bold text-center">EMPTY DATA</p>
               </div>
             )}
           </div>
@@ -240,12 +288,45 @@ function User() {
               close
             </span>
           </div>
-          <div className="mt-5 space-y-5">
-            <input data-theme="black" type="text" defaultValue={dataUpdate && dataUpdate.username} name="username" id="username" autoComplete="off" placeholder="Username" className="border border-green-500 w-full outline-none p-3" />
-            <input data-theme="black" type="text" defaultValue={dataUpdate && dataUpdate.first_name} name="first_name" id="first_name" autoComplete="off" placeholder="First Name" className="border border-green-500 w-full outline-none p-3" />
-            <input data-theme="black" type="text" defaultValue={dataUpdate && dataUpdate.last_name} name="last_name" id="last_name" autoComplete="off" placeholder="Last Name" className="border border-green-500 w-full outline-none p-3" />
-            <div className="flex items-center   border border-green-500 px-2 py-3">
-              <input data-theme="black" defaultValue={dataUpdate && dataUpdate.password} autoComplete="off" type={!show ? 'password' : 'text'} name="password" id="password" placeholder="Password" className="w-full  h-fit   outline-none" />
+          <form action="" className="mt-5 space-y-5" onSubmit={handleSubmit(onUpdate)}>
+            <input
+              data-theme="black"
+              type="text"
+              defaultValue={dataUpdate && dataUpdate.username}
+              {...register('newusername')}
+              onChange={(e) => setValue('newusername', e.target.value)}
+              name="username"
+              id="username"
+              autoComplete="off"
+              placeholder="Username"
+              className="border border-green-500 w-full outline-none p-3"
+            />
+            <input
+              data-theme="black"
+              type="text"
+              defaultValue={dataUpdate && dataUpdate.first_name}
+              {...register('newfirst_name')}
+              onChange={(e) => setValue('newfirst_name', e.target.value)}
+              name="first_name"
+              id="first_name"
+              autoComplete="off"
+              placeholder="First Name"
+              className="border border-green-500 w-full outline-none p-3"
+            />
+            <input
+              data-theme="black"
+              type="text"
+              defaultValue={dataUpdate && dataUpdate.last_name}
+              {...register('newlast_name')}
+              onChange={(e) => setValue('newlast_name', e.target.value)}
+              name="last_name"
+              id="last_name"
+              autoComplete="off"
+              placeholder="Last Name"
+              className="border border-green-500 w-full outline-none p-3"
+            />
+            {/* <div className="flex items-center   border border-green-500 px-2 py-3">
+              <input data-theme="black" autoComplete="off" {...register('newpassword')} onChange={(e) => setValue('newpassword', e.target.value)} type={!show ? 'password' : 'text'} name="password" id="password" placeholder="Password" className="w-full  h-fit   outline-none" />
               <button
                 onClick={() => {
                   toggleShow()
@@ -253,8 +334,27 @@ function User() {
               >
                 {show ? <FaEyeSlash size={'22px'} color="#ff0000" /> : <FaEye size={'22px'} color="#ff0000" />}
               </button>
-            </div>
-            <button className="btn  mb-4  text-[20px] w-full h-[50px]   btn-sm btn-outline btn-secondary">Save</button>
+            </div> */}
+            <button type="submit" className="btn  mb-4  text-[20px] w-full h-[50px]   btn-sm btn-outline btn-secondary">
+              Save
+            </button>
+          </form>
+        </Modal>
+        <Modal isOpen={modalDeleteData} onRequestClose={buttonDeleteModal} style={customStyles2} contentLabel="Add Modal">
+          <h3 className="text-[24px] uppercase text-[#feff6e] font-bold text-center">Delete Data</h3>
+          <p className="text-[20px] pt-5 uppercase text-[#feff6e] font-bold text-center">Are you sure to delete this data?</p>
+          <div className="flex items-center justify-center mt-4 gap-4">
+            <button onClick={buttonDeleteModal} className="btn  mb-4  text-[20px] w-[30%] h-[50px]   btn-sm btn-outline btn-secondary">
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                dataDelete()
+              }}
+              className="btn  mb-4  text-[20px] w-[30%] h-[50px]   btn-sm btn-outline btn-secondary"
+            >
+              Yes
+            </button>
           </div>
         </Modal>
         <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="dark" />

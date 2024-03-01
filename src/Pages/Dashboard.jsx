@@ -89,8 +89,8 @@ function Dashboard() {
           {allEntity && allEntity.length > 0 ? (
             <Table columns={columns} data={allEntity} />
           ) : (
-            <div>
-              <p>Kosong</p>
+            <div className="absolute bottom-[40%] right-[37%]">
+              <p className="text-[32px] pt-5 uppercase text-[#feff6e] font-bold text-center">EMPTY DATA</p>
             </div>
           )}
         </div>

@@ -9,6 +9,7 @@ import Dashboard from './Pages/Dashboard'
 import DataBot from './Pages/DataBot'
 import BotData from './Pages/Data/Dummy'
 import UserPage from './Pages/User'
+import Task from './Pages/Task'
 
 function App() {
   return (
@@ -45,6 +46,14 @@ function App() {
             element={
               <LayoutAdmin>
                 <UserPage />
+              </LayoutAdmin>
+            }
+          />
+          <Route
+            path="/dashboard/task"
+            element={
+              <LayoutAdmin>
+                <Task />
               </LayoutAdmin>
             }
           />
