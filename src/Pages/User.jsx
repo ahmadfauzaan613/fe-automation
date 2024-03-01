@@ -78,29 +78,29 @@ function User() {
         Header: 'Action',
         accessor: (data) => {
           return (
-            <div>
-              {role === 'superadmin' && (
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      buttonUpdateModal()
-                      setUpdateData(data)
-                    }}
-                    className="btn btn-sm btn-ghost btn-secondary"
-                  >
-                    <FaEdit size={'20px'} color="#05bcffd3" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      buttonDeleteModal()
-                      setDlete(data)
-                    }}
-                    className="btn  btn-sm btn-ghost btn-secondary"
-                  >
-                    <FaTrash size={'20px'} color="red" />
-                  </button>
-                </div>
-              )}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  if (role === 'superadmin') {
+                    buttonUpdateModal()
+                    setUpdateData(data)
+                  }
+                }}
+                className="btn btn-sm btn-ghost btn-secondary"
+              >
+                <FaEdit size={'20px'} color="#05bcffd3" />
+              </button>
+              <button
+                onClick={() => {
+                  if (role === 'superadmin') {
+                    buttonDeleteModal()
+                    setDlete(data)
+                  }
+                }}
+                className="btn  btn-sm btn-ghost btn-secondary"
+              >
+                <FaTrash size={'20px'} color="red" />
+              </button>
             </div>
           )
         },
